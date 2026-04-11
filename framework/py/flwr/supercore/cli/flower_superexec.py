@@ -17,6 +17,7 @@
 
 import argparse
 from logging import INFO, WARN
+from pathlib import Path
 from typing import Any
 
 import yaml
@@ -109,8 +110,18 @@ def flower_superexec() -> None:
         except ValueError as err:
             flwr_exit(
                 ExitCode.SUPEREXEC_AUTH_SECRET_LOAD_FAILED,
-                f"Failed to load SuperExec auth secret: {err}",
+                f"Failed to load SuperExec authentication secret: {err}",
             )
+
+        # Destroy the auth secret file immediately after loading
+        if args.plugin_type == ExecPluginType.SERVER_APP_EPHEMERAL:
+            try:
+                secret_path = Path(args.superexec_auth_secret_file).expanduser()
+                secret_path.write_bytes(b"\x00" * secret_path.stat().st_size)
+                secret_path.unlink()
+            except OSError as e:
+                log(WARN, "Failed to destroy authentication secret file: %s", e)
+
     run_superexec(
         plugin_class=plugin_class,
         stub_class=stub_class,  # type: ignore
