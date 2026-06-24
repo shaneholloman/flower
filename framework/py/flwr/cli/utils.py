@@ -90,6 +90,15 @@ def print_json_to_stdout(data: str | Any) -> None:
         Console(file=sys.__stdout__).print_json(data=data)
 
 
+def log_superlink_connection(superlink_connection: SuperLinkConnection) -> None:
+    """Log the selected SuperLink connection for human-readable CLI output."""
+    typer.secho(
+        f"Using SuperLink: {superlink_connection.name} "
+        f"({superlink_connection.address})",
+        fg=typer.colors.BLUE,
+    )
+
+
 def _format_grpc_error(err: grpc.RpcError) -> str:
     """Return a user-facing message from a gRPC error.
 
@@ -352,6 +361,7 @@ def init_channel_from_connection(
     """
     connection = ensure_local_superlink(connection)
     address = cast(str, connection.address)
+    log_superlink_connection(connection)
 
     root_certificates_bytes = load_certificate_in_connection(connection)
 
