@@ -103,8 +103,8 @@ from flwr.server.superlink.linkstate import LinkState
 from flwr.supercore.auth.typing import AccountInfo
 from flwr.supercore.constant import (
     DEFAULT_FEDERATION_SIMULATION,
+    FLWR_SUPERGRID_API_URL,
     NOOP_FEDERATION_ID,
-    PLATFORM_API_URL,
     ActionType,
     RunTime,
     TaskType,
@@ -1099,7 +1099,7 @@ def _get_remote_fab(
         ) from e
 
     # Request download link and verification information
-    url = f"{PLATFORM_API_URL}/hub/fetch-fab"
+    url = f"{FLWR_SUPERGRID_API_URL}/hub/fetch-fab"
     try:
         presigned_url, verifications, note = request_download_link(
             app_id, app_version, url, "fab_url"
